@@ -12,7 +12,7 @@ class User:
         self.__phone = None
         self.__name = None
         self.__surname = None
-        self.__order = None
+        # Заполнение имен полей через методы свойств
         self.name = name
         self.surname = surname
         # Добавляем объект в словарь (БД)
@@ -43,11 +43,13 @@ class User:
             self.__surname = surname        
 
     @property
-    def phone(self):
+    def id(self):
+        return self.__id
+
+    def get_phone(self):
         return self.__phone
 
-    @phone.setter
-    def phone(self, phone):
+    def set_phone(self, phone):
         key = ''
         for i in range(4):
             key += str(random.randint(0,9))
@@ -55,10 +57,6 @@ class User:
         print(key)
         if input('Вам на телефон выслан код подтверждения:') == key:
             self.__phone = phone
-
-    @property
-    def id(self):
-        return self.__id
 
      # Проверка существования пользователя в словаре (БД)
     @staticmethod
@@ -77,5 +75,8 @@ class Admin(User):
     def create_catalog():
         pass
 
-    def add_to_catalog():
+    def change_item():
+        pass
+
+    def change_catalog():
         pass
