@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from  enum import Enum
 from datetime import datetime
+from order import Item, Catalog
 
 # Перечисление статуса заказа
 class OrderStatus(Enum):
