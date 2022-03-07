@@ -1,4 +1,6 @@
 import random
+import item
+import order
 
 class User:
 
@@ -58,6 +60,33 @@ class User:
         if input('Вам на телефон выслан код подтверждения:') == key:
             self.__phone = phone
 
+    def show_items(self, catalog_id):
+        print(item.Catalog.show_items(catalog_id))
+
+    def add_item(self, item_id):
+        if User.is_user_valid(self.id):
+            order.Order.add_item(self.id, item_id)
+        else:
+            print('Необходимо использовать корректные данные пользователя!')
+
+    def delete_item(self, item_id):
+        if User.is_user_valid(self.id):
+            order.Order.delete_item(self.id, item_id)
+        else:
+            print('Необходимо использовать корректные данные пользователя!')
+
+    def clear_order(self):
+        if User.is_user_valid(self.id):
+            order.Order.clear_order(self.id)
+        else:
+            print('Необходимо использовать корректные данные пользователя!')
+
+    def pay_order(self, item_id):
+        if User.is_user_valid(self.id) and self.get_phone():
+            order.Order.pay_order(self.id, item_id)
+        else:
+            print('Необходимо использовать корректные данные пользователя и номер телефона!')
+
      # Проверка существования пользователя в словаре (БД)
     @staticmethod
     def is_user_valid(id):
@@ -70,13 +99,13 @@ class Admin(User):
         super().__init__(name,surname)
 
     def create_item():
-        pass
+        item.Item.create()
     
     def create_catalog():
-        pass
+        item.Catalog.create()
 
     def change_item():
-        pass
+        item.Item.change()
 
     def change_catalog():
-        pass
+        item.Catalog.change()

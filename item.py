@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-from matplotlib.pyplot import cla
-
 class IChange(ABC):
 
     @abstractmethod
@@ -29,12 +27,12 @@ class Catalog(ISurfing, IChange):
         self.__id = Catalog.__id_catalog
         self.description = description
         self.title = title
-        self.items = list()
+        self.items = set()
         # Добавление объекта в словарь (БД)
         Catalog.__catalog_list[Catalog.__id_catalog] = self
 
     @property
-    def ip(self):
+    def id(self):
         return self.__id
 
     @staticmethod
@@ -72,7 +70,7 @@ class Catalog(ISurfing, IChange):
         # Для примера диалог реализован через print input
         # 0 - выход из меню редактирования
         # 1 - Показать все каталоги
-        # 2 - Показать все итемы
+        # 2 - Показать все итемы каталога
         # 3 - Перейти в каталог
         # 4 - Добавить Catalog в текущий каталог
         # 5 - Удалить Catalog из текущего каталога
@@ -81,8 +79,51 @@ class Catalog(ISurfing, IChange):
         # 8 - Установить цену для Item
         # 9 - Изменить оглавление и описание каталога
         command = -1
+        current_id = 0
         while command != 0:
             command = int(input('Введите номер команды: '))
+            if command == 1:
+                for unit in Catalog.__catalog_list.values():
+                    print(unit.id, unit.title)
+            elif command == 2:
+                # Проверка на наличие id в словаре не проверяется
+                # Предполагается, что выбор будет осуществляться из предложенных значений
+                if current_id > 0:
+                    for unit in Catalog.__catalog_list.get(current_id).items:
+                        if type(unit) == Catalog:
+                            print('Каталог', end=' ')
+                        else:
+                            print('Продукт', end=' ')
+                        print(unit.id, unit.title)
+            elif command == 3:
+                current_id = int(input('Введите id каталога: '))
+            elif command == 4:
+                if current_id > 0:
+                    Catalog.__catalog_list.get(current_id).items.add(Catalog.__catalog_list.get(int(input('Введите id каталога: '))))
+                else:
+                    Catalog.create()
+            elif command == 5:
+                if current_id > 0:
+                    Catalog.__catalog_list.get(current_id).items.remove(Catalog.__catalog_list.get(int(input('Введите id каталога: '))))
+                # Удаление каталога из словаря (БД) не предполагается
+            elif command == 6:
+                item_id = int(input('Введите id продукта: '))
+                if not item_id in Catalog.__item_list:
+                    # Предполагается, что итем существует, проверка не делается
+                    Catalog.__item_list[item_id] = Offer(Item.return_obj(item_id, float(input('Введите цену продукта: '))))
+                if current_id > 0:
+                    Catalog.__catalog_list.get(current_id).items.add(Catalog.__item_list.get(item_id).item)
+            elif command == 7:
+                if current_id > 0:
+                    Catalog.__catalog_list.get(current_id).items.remove(Catalog.__item_list.get(int(input('Введите id продукта: ')).item))
+            elif command == 8:
+                for unit in Catalog.__item_list.values():
+                    print(unit.item.id, unit.item.title, 'цена', unit.price)
+                Catalog.__item_list[int(input('Введите id продукта: '))].price = float(input('Введите цену продукта: '))
+            elif command == 9:
+                if current_id > 0:
+                    Catalog.__catalog_list[current_id].title = input('Введите оглавление каталога: ')
+                    Catalog.__catalog_list[current_id].description = input('Введите описание каталога: ')
 
 
 class Item(IChange):
@@ -118,14 +159,21 @@ class Item(IChange):
 
     @staticmethod
     def change():
-        # Здесь идет реализация внесения изменений в каталог
+        # Здесь идет реализация внесения изменений в итем
         # Для примера диалог реализован через print input
         # 0 - выход из меню редактирования
         # 1 - Показать все итемы
-        # 9 - Изменить оглавление и описание каталога
+        # 9 - Изменить оглавление и описание итема
         command = -1
         while command != 0:
             command = int(input('Введите номер команды: '))
+            if command == 1:
+                for unit in Catalog.__catalog_list.values():
+                    print(unit.id, unit.title)
+            elif command == 9:
+                item_id = int(input('Введите id продукта: '))
+                Item.__item_list[item_id].title = input('Введите оглавление продукта: ')
+                Item.__item_list[item_id].description = input('Введите описание продукта: ')
 
 class Offer:
 
