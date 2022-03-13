@@ -2,8 +2,8 @@ import random
 import item
 import order
 
-class User:
 
+class User:
     # Счетчик пользователей
     __id_counter = 0
     __users = dict()
@@ -36,13 +36,12 @@ class User:
     def surname(self):
         return self.__surname
 
-
     @surname.setter
     def surname(self, surname):
         # Проверка фамилия пользователя
         # Сюда вставляется код проверка, сейчас сделана заглушка
         if surname:
-            self.__surname = surname        
+            self.__surname = surname
 
     @property
     def id(self):
@@ -54,7 +53,7 @@ class User:
     def set_phone(self, phone):
         key = ''
         for i in range(4):
-            key += str(random.randint(0,9))
+            key += str(random.randint(0, 9))
         # Отправляем код
         print(key)
         if input('Вам на телефон выслан код подтверждения:') == key:
@@ -87,7 +86,7 @@ class User:
         else:
             print('Необходимо использовать корректные данные пользователя и номер телефона!')
 
-     # Проверка существования пользователя в словаре (БД)
+    # Проверка существования пользователя в словаре (БД)
     @staticmethod
     def is_user_valid(id):
         return id in User.__users
@@ -96,11 +95,14 @@ class User:
 class Admin(User):
 
     def __init__(self, name, surname):
-        super().__init__(name,surname)
+        super().__init__(name, surname)
 
+    # ----------------------------
+    # Забыл обозначить методы как абстрактные
+    # ----------------------------
     def create_item():
         item.Item.create()
-    
+
     def create_catalog():
         item.Catalog.create()
 

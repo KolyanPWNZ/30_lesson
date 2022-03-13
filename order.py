@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from  enum import Enum
 from datetime import datetime
-from order import Item, Catalog
+from order import Item, Catalog # Это видимо опечатка
+
+
 
 # Перечисление статуса заказа
 class OrderStatus(Enum):
@@ -90,6 +92,9 @@ class Order(IOrder):
 
     @staticmethod
     def pay_order(user_id):
+        # ----------------------------
+        # "not" - здесь судя по всему лишний
+        # ----------------------------
         if not user_id in Order.__orders:
             # Проверка статуса заказа (актуальность цен)
             if Order.__orders[user_id]['active'].__status == OrderStatus.ACTIVE:

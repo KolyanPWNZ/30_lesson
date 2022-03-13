@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class IChange(ABC):
 
     @abstractmethod
@@ -10,14 +11,15 @@ class IChange(ABC):
     def change():
         pass
 
+
 class ISurfing(ABC):
 
     @abstractmethod
     def show_items(id):
         pass
 
-class Catalog(ISurfing, IChange):
 
+class Catalog(ISurfing, IChange):
     __id_catalog = 0
     __item_list = dict()
     __catalog_list = dict()
@@ -47,6 +49,10 @@ class Catalog(ISurfing, IChange):
         out = ''
         for unit in Catalog.__catalog_list[id].items:
             if type(unit) == Catalog:
+                # ----------------------------
+                # А как здесь может оказаться каталог?
+                # перебираем же товары
+                # ----------------------------
                 out += 'Каталог ' + str(unit.id) + ' ' + str(unit.title) + '\n'
             elif type(unit) == Item:
                 out += 'Товар/услуга ' + str(unit.id) + ' ' + str(unit.title) + '\n'
@@ -55,6 +61,10 @@ class Catalog(ISurfing, IChange):
                 # Можно вызвать исключение
         return out
 
+    # ----------------------------
+    # Думаю здесь больше бы подошло название метода get_new_catalog, иначе неочевидно, что будет возвращаться каталог
+    # И подобное, стоит отправлять в классы интерфейсов
+    # ----------------------------
     @staticmethod
     def create():
         # Запрос входной инофрмации у администратора для создания нового каталога
@@ -64,6 +74,11 @@ class Catalog(ISurfing, IChange):
         descr = input('Введите описание каталога: ')
         return Catalog(descr, title)
 
+    # ----------------------------
+    # Классное решение с меню, но думаю не хватает напечатать все пункты перед запросом номеров
+    # И думаю, стоило бы расписать геттеры для полей, меню бы это разгрузило и проще было бы взаимодействовать с полями
+    # И в сеттерах можно было валидировать сами данные
+    # ----------------------------
     @staticmethod
     def change():
         # Здесь идет реализация внесения изменений в каталог
@@ -99,23 +114,27 @@ class Catalog(ISurfing, IChange):
                 current_id = int(input('Введите id каталога: '))
             elif command == 4:
                 if current_id > 0:
-                    Catalog.__catalog_list.get(current_id).items.add(Catalog.__catalog_list.get(int(input('Введите id каталога: '))))
+                    Catalog.__catalog_list.get(current_id).items.add(
+                        Catalog.__catalog_list.get(int(input('Введите id каталога: '))))
                 else:
                     Catalog.create()
             elif command == 5:
                 if current_id > 0:
-                    Catalog.__catalog_list.get(current_id).items.remove(Catalog.__catalog_list.get(int(input('Введите id каталога: '))))
+                    Catalog.__catalog_list.get(current_id).items.remove(
+                        Catalog.__catalog_list.get(int(input('Введите id каталога: '))))
                 # Удаление каталога из словаря (БД) не предполагается
             elif command == 6:
                 item_id = int(input('Введите id продукта: '))
                 if not item_id in Catalog.__item_list:
                     # Предполагается, что итем существует, проверка не делается
-                    Catalog.__item_list[item_id] = Offer(Item.return_obj(item_id, float(input('Введите цену продукта: '))))
+                    Catalog.__item_list[item_id] = Offer(
+                        Item.return_obj(item_id, float(input('Введите цену продукта: '))))
                 if current_id > 0:
                     Catalog.__catalog_list.get(current_id).items.add(Catalog.__item_list.get(item_id).item)
             elif command == 7:
                 if current_id > 0:
-                    Catalog.__catalog_list.get(current_id).items.remove(Catalog.__item_list.get(int(input('Введите id продукта: ')).item))
+                    Catalog.__catalog_list.get(current_id).items.remove(
+                        Catalog.__item_list.get(int(input('Введите id продукта: ')).item))
             elif command == 8:
                 for unit in Catalog.__item_list.values():
                     print(unit.item.id, unit.item.title, 'цена', unit.price)
@@ -127,7 +146,6 @@ class Catalog(ISurfing, IChange):
 
 
 class Item(IChange):
-
     __id_item = 0
     __item_list = dict()
 
@@ -147,7 +165,11 @@ class Item(IChange):
     def return_obj(item):
         # Защита от неверных данных не реализована, реализовывать тут
         return Item.__item_list[item]
-    
+
+    # ----------------------------
+    # аналогично как с каталогами
+    # Или ты реализовывал универсальные методы (судя по названиям), чтобы использовать в интерфейсе?
+    # ----------------------------
     @staticmethod
     def create():
         # Запрос входной инофрмации у администратора для создания нового итема
@@ -175,12 +197,13 @@ class Item(IChange):
                 Item.__item_list[item_id].title = input('Введите оглавление продукта: ')
                 Item.__item_list[item_id].description = input('Введите описание продукта: ')
 
+
 class Offer:
 
     def __init__(self, item: Item, price: float):
         self.__item = item
         self.price = price
-    
+
     @property
     def item(self):
         return self.__item
